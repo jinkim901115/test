@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.restaurant.domain.WriteDAO">
+
+	<select id="selectFromRow" 
+		resultType="com.spring.restaurant.domain.WriteDTO">
+		<![CDATA[  
+		SELECT
+			ex_uid "uid", 
+			ex_name name, 
+			ex_grade content, 
+			ex_addr addr
+		FROM 
+			(SELECT ROWNUM AS RNUM, T.* FROM 
+				(SELECT * FROM exam_restaurant ORDER BY ex_uid DESC) T) 
+		WHERE 
+			RNUM >= #{from} AND RNUM < (#{from} + #{pageRows})
+		]]>	
+	</select>
+	
+	<select id="countAll" resultType="int">
+		SELECT count(*) FROM test_write 
+	</select>	
+	
+	<select id="selectByUid" resultType="com.spring.restaurant.domain.WriteDTO">
+		SELECT 
+			ex_uid "uid", 
+			ex_name name,
+			ex_grade grade,
+			ex_addr addr
+		FROM exam_restaurant
+		WHERE ex_uid=#{uid}
+	</select>
+	
+	<select id="readByUid" resultType="com.spring.restaurant.domain.WriteDTO">
+		SELECT 
+			ex_uid "uid", ex_name name, ex_grade grade, ex_addr addr
+		FROM exam_restaurant
+		WHERE ex_uid=#{uid}
+	</select>
+	
+	
+	<insert id="insert" flushCache="true"
+		parameterType="com.spring.restaurant.domain.WriteDTO">
+		INSERT INTO exam_restaurant
+			(ex_uid, ex_name, ex_grade, ex_addr)
+		VALUES
+			(exam_restaurant_seq.nextval, #{name}, #{grade}, #{addr})
+	</insert>
+	
+
+
+	<update id="update" flushCache="true" 
+		parameterType="com.spring.restaurant.domain.WriteDTO">
+		UPDATE exam_restaurant 
+		SET ex_name = #{name}, ex_grade = #{grade}, ex_addr = #{addr}
+		WHERE ex_uid = #{uid}
+	</update>
+	
+ 	  <delete id="deleteByUid" flushCache="true"
+ 	  	parameterType="java.util.ArrayList">
+ 	  	
+ 	  	DELETE FROM exam_restaurant
+ 	  	WHERE ex_uid IN (
+ 	  		<foreach collection="array" item="item" index="index" separator=",">
+ 	  			${item}
+ 	  		</foreach>
+ 	  	)
+ 	  </delete>
+	
+</mapper>	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
